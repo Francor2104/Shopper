@@ -8,7 +8,6 @@
     <h1>Registro de Productos</h1>
 
     <?php
-    session_start();
 
     require_once 'funciones.php';
 
@@ -43,7 +42,7 @@
 
         if (!empty($productos)) {
             foreach ($productos as $producto) {
-                echo "<li>" . $producto['nombre'] . " - " . $producto['monto'] . "Bs</li>";
+                echo "<li>" . $producto->obtenerNombre() . " - " . $producto->obtenerMonto() . "Bs</li>";
             }
         } else {
             echo "<li>No hay productos registrados.</li>";

@@ -1,60 +1,111 @@
 <?php
-function registrarProducto($nombre, $monto) {
-    $resultado = array(
-        'exito' => false,
-        'mensaje' => ''
-    );
+session_start();
+class Producto {
+    private $nombre;
+    private $monto;
 
-    if (!empty($nombre) && is_numeric($monto) && $monto <= 3500) {
-        $producto = array(
-            'nombre' => $nombre,
-            'monto' => $monto
+    public function __construct($nombre, $monto) {
+        $this->nombre = $nombre;
+        $this->monto = $monto;
+    }
+
+    public function obtenerNombre() {
+        return $this->nombre;
+    }
+
+    public function obtenerMonto() {
+        return $this->monto;
+    }
+}
+
+class RegistroProductos {
+    private $productos;
+    private $cantidadProductos;
+
+    public function __construct() {
+        
+        $this->productos = isset($_SESSION['productos']) ? $_SESSION['productos'] : array();
+        $this->cantidadProductos = isset($_SESSION['cantidadProductos']) ? $_SESSION['cantidadProductos'] : 0;
+    }
+
+    public function registrarProducto($nombre, $monto) {
+        $resultado = array(
+            'exito' => false,
+            'mensaje' => ''
         );
 
-        if (!isset($_SESSION['productos'])) {
-            $_SESSION['productos'] = array();
-        }
+        if (!empty($nombre) && is_numeric($monto) && $monto <= 3500) {
+            $producto = new Producto($nombre, $monto);
 
-        $totalAnterior = obtenerTotalProductos();
-        $nuevoTotal = $totalAnterior + $monto;
+            $totalAnterior = $this->obtenerTotalProductos();
+            $nuevoTotal = $totalAnterior + $monto;
 
-        if ($nuevoTotal <= 50000) {
-            $_SESSION['productos'][] = $producto;
-            $_SESSION['cantidadProductos'] = count($_SESSION['productos']);
+            if ($nuevoTotal <= 50000) {
+                $this->productos[] = $producto;
+                $this->cantidadProductos++;
 
-            $resultado['exito'] = true;
-            $resultado['mensaje'] = "Producto registrado exitosamente.";
+                $resultado['exito'] = true;
+                $resultado['mensaje'] = "Producto registrado exitosamente.";
+            } else {
+                $resultado['mensaje'] = "Error: El registro del producto superaría el total máximo permitido (50000Bs).";
+            }
         } else {
-            $resultado['mensaje'] = "Error: El registro del producto superaría el total máximo permitido (50000Bs).";
+            $resultado['mensaje'] = "Error: Por favor, ingresa un nombre válido y un monto no mayor a 3500.";
         }
-    } else {
-        $resultado['mensaje'] = "Error: Por favor, ingresa un nombre válido y un monto no mayor a 3500.";
+
+        $_SESSION['productos'] = $this->productos;
+        $_SESSION['cantidadProductos'] = $this->cantidadProductos;
+
+        return $resultado;
     }
 
-    return $resultado;
-}
-
-function obtenerProductos() {
-    return isset($_SESSION['productos']) ? $_SESSION['productos'] : array();
-}
-
-function obtenerCantidadProductos() {
-    return isset($_SESSION['cantidadProductos']) ? $_SESSION['cantidadProductos'] : 0;
-}
-
-function obtenerTotalProductos() {
-    $total = 0;
-    $productos = obtenerProductos();
-
-    foreach ($productos as $producto) {
-        $total += $producto['monto'];
+    public function vaciarCarrito() {
+        $this->productos = array();
+        $this->cantidadProductos = 0;
+        unset($_SESSION['productos']);
+        unset($_SESSION['cantidadProductos']);
     }
 
-    return $total;
+    public function obtenerProductos() {
+        return $this->productos;
+    }
+
+    public function obtenerCantidadProductos() {
+        return $this->cantidadProductos;
+    }
+
+    public function obtenerTotalProductos() {
+        $total = 0;
+
+        foreach ($this->productos as $producto) {
+            $total += $producto->obtenerMonto();
+        }
+
+        return $total;
+    }
+}
+
+function registrarProducto($nombre, $monto) {
+    $registroProductos = new RegistroProductos();
+    return $registroProductos->registrarProducto($nombre, $monto);
 }
 
 function vaciarCarrito() {
-    $_SESSION['productos'] = array();
-    $_SESSION['cantidadProductos'] = 0;
+    $registroProductos = new RegistroProductos();
+    $registroProductos->vaciarCarrito();
 }
-?>
+
+function obtenerProductos() {
+    $registroProductos = new RegistroProductos();
+    return $registroProductos->obtenerProductos();
+}
+
+function obtenerCantidadProductos() {
+    $registroProductos = new RegistroProductos();
+    return $registroProductos->obtenerCantidadProductos();
+}
+
+function obtenerTotalProductos() {
+    $registroProductos = new RegistroProductos();
+    return $registroProductos->obtenerTotalProductos();
+}
