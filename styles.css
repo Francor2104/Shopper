@@ -1,0 +1,85 @@
+body {
+    font-family: 'Press Start 2P', cursive;
+    background-color: #000000;
+    color: #FFFFFF;
+    text-align: center;
+    padding: 20px;
+}
+
+h1 {
+    font-size: 36px;
+    margin-bottom: 30px;
+}
+
+h2 {
+    font-size: 24px;
+    margin-top: 40px;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+li {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.success {
+    color: #00FF00;
+    font-weight: bold;
+}
+
+.error {
+    color: #FF0000;
+    font-weight: bold;
+}
+
+#formulario {
+    margin-bottom: 30px;
+}
+
+.text-input,
+.number-input,
+.submit-button {
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    background-color: #FFD700;
+    color: #000000;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+
+.text-input:focus,
+.number-input:focus {
+    outline: none;
+    box-shadow: 0 0 5px #FFD700;
+}
+
+.text-input,
+.number-input {
+    width: 200px;
+    margin-right: 10px;
+}
+
+.submit-button:hover {
+    background-color: #FFA500;
+}
+
+.submit-button:active {
+    background-color: #FF8C00;
+}
+
+#listaPrecios li:before {
+    content: "\25B6 ";
+    color: #FFD700;
+}
+
+#totalProductos {
+    font-size: 24px;
+    font-weight: bold;
+    margin-top: 10px;
+}
